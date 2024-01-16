@@ -7,9 +7,6 @@ import '@shared/typeorm';
 
 const app = express();
 
-
-
-
 app.use(routes);
 
 app.use(

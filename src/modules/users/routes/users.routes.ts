@@ -18,3 +18,5 @@ usersRouter.post(
   }),
   usersController.create,
 );
+
+export default usersRouter;

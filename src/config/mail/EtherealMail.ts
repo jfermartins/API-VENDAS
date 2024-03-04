@@ -11,7 +11,7 @@ interface ITemplateVariable {
 }
 
 interface IParseMailTemplate {
-  template: string;
+  file: string;
   variables: ITemplateVariable;
 }
 
@@ -45,7 +45,7 @@ export default class EtherealMail {
 
     const message = await transporter.sendMail({
       from: {
-        name: from?.name || 'Equipe API VENDAS',
+        name: from?.name || 'Equipe API Vendas',
         address: from?.email || 'equipe@apivendas.com.br',
       },
       to: {

@@ -17,7 +17,7 @@ interface IRequest {
 
 class CreateOrderService {
   public async execute({ customer_id, products }: IRequest): Promise<Order> {
-    const orderRepository = getCustomRepository(OrdersRepository);
+    const ordersRepository = getCustomRepository(OrdersRepository);
     const customerRepository = getCustomRepository(CustomersRepository);
     const productsRepository = getCustomRepository(ProductsRepository);
 
@@ -56,6 +56,19 @@ class CreateOrderService {
         'The quantity ${quantityAvailable[0].quantity} is not available for ${quantityAvailable[0].id}.',
       );
     }
+
+    const serializedProducts = products.map(product => ({
+      product_id: product.id,
+      quantity: product.quantity,
+      price: existsProducts.filter(p => p.id == product.id)[0].price,
+    }));
+
+    const order = await ordersRepository.createOrder({
+      customer: customerExists,
+      products: serializedProducts,
+    });
+
+
   }
 }
 

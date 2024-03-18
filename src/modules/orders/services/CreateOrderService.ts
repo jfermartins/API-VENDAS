@@ -1,30 +1,33 @@
 import AppError from '@shared/errors/AppError';
 import { getCustomRepository } from 'typeorm';
+import Order from '../typeorm/entities/Order';
+import OrdersRepository from '../typeorm/repositories/OrdersRepository';
+import CustomersRepository from '@modules/customers/typeorm/repositories/CustomersRepository';
+import ProductsRepository from '@modules/products/typeorm/repositories/ProductsRepository';
 
-interface IRequest {
-  name: string;
-  price: number;
+interface IProduct {
+  id: string;
   quantity: number;
 }
 
-class CreateOrderService {
-  public async execute({ name, price, quantity }: IRequest): Promise<Product> {
-    const productsRepository = getCustomRepository(ProductRepository);
-    const productExists = await productsRepository.findByName(name);
+interface IRequest {
+  customer_id: string;
+  products: IProduct[];
+}
 
-    if (productExists) {
-      throw new AppError('There is already one product with this name');
+class CreateOrderService {
+  public async execute({ customer_id, products }: IRequest): Promise<Order> {
+    const orderRepository = getCustomRepository(OrdersRepository);
+    const customerRepository = getCustomRepository(CustomersRepository);
+    const productsRepository = getCustomRepository(ProductsRepository);
+
+    const customerExists = await customerRepository.findById(customer_id);
+
+    if (!customerExists) {
+      throw new AppError('Could not find any customer with the given id.');
     }
 
-    const product = productsRepository.create({
-      name,
-      price,
-      quantity,
-    });
-
-    await productsRepository.save(product);
-
-    return product;
+    const existsProducts = await productsRepository.findAllByIds(products);
   }
 }
 
